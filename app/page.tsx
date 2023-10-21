@@ -1,7 +1,8 @@
 import Image from 'next/image'
+import Promo from './components/Promo'
 
 export default function Home() {
   return (
-		<h1 className='text-red-500'>Hello world!</h1>
+		<Promo />
   )
 }
