@@ -6,7 +6,7 @@ const PhoneInput = () => {
 	const handleChange = () => {
 		setChecked(prev => !prev)
 	}
-	
+
   return (
     <>
       <div className="w-[380px] pt-[72px] px-[48px] h-full bg-primary absolute top-0 left-0">
@@ -64,8 +64,8 @@ const PhoneInput = () => {
           <div className="flex mb-[13px]">
             <div className="py-1.5 px-2.5 mr-2.5 h-[52px] relative">
               <input
-								checked={checked}
-								onChange={handleChange}
+                checked={checked}
+                onChange={handleChange}
                 id="GDPR"
                 name="GDPR"
                 type="checkbox"
@@ -87,7 +87,9 @@ const PhoneInput = () => {
               Согласие на обработку персональных данных
             </label>
           </div>
-					<button className="h-[52px] w-full uppercase font-medium leading-[18.75px] text-[#4E4E4E] border border-[#4E4E4E] border-solid">Подтвердить номер</button>
+          <button className="h-[52px] w-full uppercase font-medium leading-[18.75px] text-[#4E4E4E] border border-[#4E4E4E] border-solid">
+            Подтвердить номер
+          </button>
         </div>
       </div>
     </>
