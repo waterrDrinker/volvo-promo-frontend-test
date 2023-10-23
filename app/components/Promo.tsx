@@ -1,25 +1,34 @@
-'use client'
-import { useState } from "react"
-import Banner from "../features/video/Banner"
-import VideoPlayer from "../features/video/VideoPlayer"
+"use client";
+import { useState } from "react";
+import VideoPlayer from "../features/video/VideoPlayer";
 import ActivePage from "../features/input/ActivePage";
-
-type Status = 'idle' | 'input';
+import Banner from "../features/video/Banner";
 
 const Promo = () => {
-	const [status, setStatus] = useState<Status>('idle')
+  const [isIdle, setIsIdle] = useState(true);
+  const [playback, setPlayback] = useState(true);
 
-	const handleStatus = (status: Status): void => {
-		setStatus(status)
-	}
+  const handleStatus = (): void => {
+    setIsIdle((prev) => !prev);
+  };
 
-	return (
-		<div className="w-[1280px] h-[720px] relative overflow-hidden">
-			<VideoPlayer />
-			{/* {status === 'idle' && <Banner handleStatus={handleStatus} />} */}
-			<ActivePage />
-		</div>
-	)
-}
+  const handlePlayback = () => {
+    setPlayback((prev) => !prev);
+  };
 
-export default Promo
+  return (
+    <div className="w-[1280px] h-[720px] relative overflow-hidden">
+      <VideoPlayer playback={playback} />
+      {isIdle ? (
+        <Banner handleStatus={handleStatus} handlePlayback={handlePlayback} />
+      ) : (
+        <ActivePage
+          handleStatus={handleStatus}
+          handlePlayback={handlePlayback}
+        />
+      )}
+    </div>
+  );
+};
+
+export default Promo;

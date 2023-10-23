@@ -1,15 +1,35 @@
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import { twMerge } from "tailwind-merge";
 
 const PhoneInput = () => {
 	const [checked, setChecked] = useState(false)
+	const panelRef = useRef<HTMLDivElement>(null)
+	useEffect(() => {
+		let node = panelRef.current;
+		let previousClassName: string;
+		node && (previousClassName = node.className);
+		const newClassName = twMerge(node?.className, "translate-x-[0px]");
+		node && (node.className = newClassName)
+
+		return () => {
+			node && (node.className = previousClassName)
+		}
+	})
+
 	const handleChange = () => {
 		setChecked(prev => !prev)
 	}
-
+	
   return (
     <>
-      <div className="w-[380px] pt-[72px] px-[48px] h-full bg-primary absolute top-0 left-0">
+      <div
+			ref={panelRef}
+		 className={`
+			w-[380px] pt-[72px] px-[48px] h-full bg-primary absolute top-0 left-0 transition-transform duration-300
+			-translate-x-[380px]
+			`
+			}>
         <div
           id="wrapper"
           className="w-[284px] flex flex-col items-center text-center"
@@ -87,7 +107,8 @@ const PhoneInput = () => {
               Согласие на обработку персональных данных
             </label>
           </div>
-          <button className="h-[52px] w-full uppercase font-medium leading-[18.75px] text-[#4E4E4E] border border-[#4E4E4E] border-solid">
+          <button 					
+					className="h-[52px] w-full uppercase font-medium leading-[18.75px] text-[#4E4E4E] border border-[#4E4E4E] border-solid">
             Подтвердить номер
           </button>
         </div>

@@ -1,12 +1,12 @@
 "use client";
 import { useEffect, useRef } from "react";
-import Banner from "./Banner";
 
-const VideoPlayer = () => {
+const VideoPlayer = ({ playback }: { playback: Boolean }) => {
   const ref = useRef<HTMLVideoElement>(null);
   useEffect(() => {
+		!playback ? ref.current && ref.current.pause() :
     ref.current && ref.current.play();
-  });
+  }, [playback]);
 
   return (
     <>

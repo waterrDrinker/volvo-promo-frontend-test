@@ -2,11 +2,11 @@ import CloseBtn from "./CloseBtn";
 import QrCode from "./QrCode";
 import PhoneInput from "./PhoneInput";
 
-const ActivePage = () => {
+const ActivePage = ({ handleStatus, handlePlayback }: { handleStatus: Function, handlePlayback: Function }) => {
   return (
     <>
       <PhoneInput />
-			<CloseBtn />
+			<CloseBtn handleStatus={handleStatus} handlePlayback={handlePlayback} />
 			<QrCode />
     </>
   );

@@ -1,18 +1,25 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
+import { twMerge } from "tailwind-merge";
 
-const Banner = ({ handleStatus }: { handleStatus: Function }) => {
-  const [isBannerVisible, setIsBannerVisible] = useState(false);
+const Banner = ({ handleStatus, handlePlayback }: { handleStatus: Function, handlePlayback: Function }) => {
+	const ref = useRef<HTMLDivElement>(null)
+	useEffect(() => {
+		const node = ref.current;
+		const previousClassName = node?.className
+		const newClassName = twMerge(node?.className, "translate-x-[0px]");
+		if (ref.current) ref.current.className = newClassName
 
-  useEffect(() => {
-    setTimeout(() => setIsBannerVisible((prev) => (prev = true)), 1000);
-  });
+		return () => {
+			previousClassName && (node.className = previousClassName)
+		}
+	})
 
   return (
     <div
+			ref={ref}
       className={`
-			absolute top-[220px] right-0 flex flex-col items-center text-center w-[251px] h-[357px] bg-primary pt-5 px-[10px] transition-transform duration-300
-			${isBannerVisible ? "translate-x-[0px]" : "translate-x-[251px]"}
+			absolute top-[220px] right-0 flex flex-col items-center text-center w-[251px] h-[357px] bg-primary pt-5 px-[10px] transition-transform duration-300 translate-x-[251px]
 			`}
     >
       <h3 className="mb-5 font-medium leading-[18.75px]">
@@ -37,8 +44,12 @@ const Banner = ({ handleStatus }: { handleStatus: Function }) => {
       </div>
       <button
         onClick={() => {
-					setIsBannerVisible(false)
-					setTimeout(() => handleStatus('input'), 350)
+					const node = ref.current
+					node && (node.className = twMerge(node.className, 'translate-x-[251px]'))
+					setTimeout(() => {
+						handleStatus()
+						handlePlayback()
+					}, 350)
 				}}
         className="w-[156px] h-[52px] bg-black text-primary py-[16.5px]"
       >
