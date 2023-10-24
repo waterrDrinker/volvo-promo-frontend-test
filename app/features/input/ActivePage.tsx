@@ -1,11 +1,11 @@
 import CloseBtn from "./CloseBtn";
 import QrCode from "./QrCode";
-import PhoneInput from "./PhoneInput";
+import PhonePanel from "./PhonePanel";
 
 const ActivePage = ({ handleStatus, handlePlayback }: { handleStatus: Function, handlePlayback: Function }) => {
   return (
     <>
-      <PhoneInput />
+      <PhonePanel />
 			<CloseBtn handleStatus={handleStatus} handlePlayback={handlePlayback} />
 			<QrCode />
     </>

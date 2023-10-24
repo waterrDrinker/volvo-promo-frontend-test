@@ -18,9 +18,9 @@ const Banner = ({ handleStatus, handlePlayback }: { handleStatus: Function, hand
   return (
     <div
 			ref={ref}
-      className={`
+      className='
 			absolute top-[220px] right-0 flex flex-col items-center text-center w-[251px] h-[357px] bg-primary pt-5 px-[10px] transition-transform duration-300 translate-x-[251px]
-			`}
+			'
     >
       <h3 className="mb-5 font-medium leading-[18.75px]">
         ИСПОЛНИТЕ МЕЧТУ ВАШЕГО

@@ -9,7 +9,7 @@ const roboto = Roboto({
 
 export const metadata: Metadata = {
   title: 'Volvo',
-  description: 'proposal to buy our truck',
+  description: 'an offer to buy our truck',
 }
 
 export default function RootLayout({
