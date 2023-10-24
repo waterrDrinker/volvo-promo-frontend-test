@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { useState, useEffect, useRef, KeyboardEvent } from "react";
+import { useState, useEffect, useRef } from "react";
 import { twMerge } from "tailwind-merge";
 
 const PhonePanel = () => {
@@ -28,11 +28,11 @@ const PhonePanel = () => {
         setPhoneInput((prev) => [...phoneInput, key]);
     };
 
-    document.addEventListener("keydown", handlePhoneInput);
+    window.addEventListener("keydown", handlePhoneInput);
 
     return () => {
       node && (node.className = previousClassName);
-      document.removeEventListener("keydown", handlePhoneInput);
+      window.removeEventListener("keydown", handlePhoneInput);
     };
   });
 
@@ -83,7 +83,7 @@ const PhonePanel = () => {
       >
         {requestAccept ? (
           <div className="w-[284px] text-center pt-[189px]">
-						<h1 className="text-[32px] leading-[37.5px] font-bold">
+						<h1 className="text-[32px] leading-[37.5px] font-bold mb-[15px]">
 							ЗАЯВКА <br />
 						  ПРИНЯТА
 						</h1>
