@@ -1,12 +1,13 @@
 "use client";
 import { useEffect, useRef } from "react";
 
-const VideoPlayer = ({ playback }: { playback: Boolean }) => {
+const VideoPlayer = ({ state }: { state: string }) => {
   const ref = useRef<HTMLVideoElement>(null);
   useEffect(() => {
-		!playback ? ref.current && ref.current.pause() :
-    ref.current && ref.current.play();
-  }, [playback]);
+     state !== 'Active'
+      ? ref.current && ref.current.play()
+      : ref.current && ref.current.pause();
+  }, [state]);
 
   return (
     <>

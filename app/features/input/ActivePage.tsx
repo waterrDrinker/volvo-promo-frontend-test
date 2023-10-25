@@ -1,12 +1,15 @@
+import { useRef } from "react";
 import CloseBtn from "./CloseBtn";
 import QrCode from "./QrCode";
 import PhonePanel from "./PhonePanel";
 
-const ActivePage = ({ handleStatus, handlePlayback }: { handleStatus: Function, handlePlayback: Function }) => {
+const ActivePage = ({ onIdle }: { onIdle: Function }) => {
+	const closeBtnRef = useRef<HTMLButtonElement>(null)
+
   return (
     <>
-      <PhonePanel />
-			<CloseBtn handleStatus={handleStatus} handlePlayback={handlePlayback} />
+      <PhonePanel btnCloseNode={closeBtnRef} />
+			<CloseBtn onIdle={onIdle} ref={closeBtnRef} />
 			<QrCode />
     </>
   );

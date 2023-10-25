@@ -2,21 +2,161 @@ import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import { twMerge } from "tailwind-merge";
 
-const PhonePanel = () => {
+const PhonePanel = ({
+  btnCloseNode,
+}: {
+  btnCloseNode: { current: HTMLButtonElement | null };
+}) => {
   const [phoneInput, setPhoneInput] = useState<Array<string>>([]);
-  const [checked, setChecked] = useState(false);
-  const [requestAccept, setRequestAccept] = useState(false);
+  const [checked, setChecked] = useState<boolean>(false);
+  const [requestAccept, setRequestAccept] = useState<boolean>(false);
   const panelRef = useRef<HTMLDivElement>(null);
+  const btnsNavRef = useRef<
+    Array<HTMLButtonElement | HTMLInputElement | HTMLElement>
+  >([]);
 
   useEffect(() => {
-    let node = panelRef.current;
+    const node = panelRef.current;
     let previousClassName: string;
     node && (previousClassName = node.className);
     const newClassName = twMerge(node?.className, "translate-x-[0px]");
-    node && (node.className = newClassName);
+    if (node) setTimeout(() => (node.className = newClassName), 0);
+    return () => {
+      node && (node.className = previousClassName);
+    };
+  }, []);
 
+  useEffect(() => {
     const handlePhoneInput = (e: KeyboardEvent) => {
       const key = e.key;
+      const navBtns: string[] = [
+        "ArrowUp",
+        "ArrowDown",
+        "ArrowLeft",
+        "ArrowRight",
+        "Enter",
+      ];
+      if (navBtns.includes(key)) {
+        const focusedElement = document.activeElement as HTMLElement;
+        const lastBtn = btnsNavRef.current[btnsNavRef.current.length - 1] as HTMLButtonElement;
+       
+				if (
+          focusedElement &&
+          !btnsNavRef.current.includes(focusedElement) &&
+          key === "ArrowDown"
+        ) {
+          // if there's no focus yet
+          btnsNavRef.current[0].focus();
+        }
+
+        if (focusedElement && focusedElement.id === "GDPR" && key === "Enter")
+          setChecked((prev) => !prev);
+
+        if (
+          focusedElement &&
+          ["1", "2", "3", "4", "5", "6", "7"].includes(focusedElement.id) &&
+          key === "ArrowDown"
+        ) {
+          const elemToFocus = btnsNavRef.current.indexOf(focusedElement) + 3;
+          btnsNavRef.current[elemToFocus].focus();
+        }
+        if (
+          focusedElement &&
+          ["8", "9"].includes(focusedElement.id) &&
+          key === "ArrowDown"
+        ) {
+          const elemToFocus = btnsNavRef.current.indexOf(focusedElement) + 2;
+          btnsNavRef.current[elemToFocus].focus();
+        }
+        if (
+          focusedElement &&
+          ["0", "BACKSPACE"].includes(focusedElement.id) &&
+          key === "ArrowDown"
+        ) {
+          const elemToFocus = btnsNavRef.current.find(
+            (elem) => elem.id === "GDPR"
+          );
+          elemToFocus && elemToFocus.focus();
+        }
+        if (
+          focusedElement &&
+          focusedElement.id === "GDPR" &&
+          key === "ArrowDown" &&
+          !lastBtn.disabled
+        ) {
+          lastBtn.focus();
+        }
+        if (
+          focusedElement &&
+          focusedElement.id === "confirm" &&
+          key === "ArrowUp" &&
+          !lastBtn.disabled
+        ) {
+          btnsNavRef.current[btnsNavRef.current.length - 2].focus();
+        }
+        if (
+          focusedElement &&
+          focusedElement.id === "GDPR" &&
+          key === "ArrowUp"
+        ) {
+          const elemToFocus = btnsNavRef.current.find(
+            (elem) => elem.id === "0"
+          );
+          elemToFocus && elemToFocus.focus();
+        }
+        if (
+          focusedElement &&
+          ["BACKSPACE", "0"].includes(focusedElement.id) &&
+          key === "ArrowUp"
+        ) {
+          const elemToFocus = btnsNavRef.current.indexOf(focusedElement) - 2;
+          btnsNavRef.current[elemToFocus].focus();
+        }
+        if (
+          focusedElement &&
+          ["4", "5", "6", "7", "8", "9"].includes(focusedElement.id) &&
+          key === "ArrowUp"
+        ) {
+          const elemToFocus = btnsNavRef.current.indexOf(focusedElement) - 3;
+          btnsNavRef.current[elemToFocus].focus();
+        }
+        if (
+          focusedElement &&
+          ["3", "6", "9", "0", "GDPR", "confirm"].includes(focusedElement.id) &&
+          key === "ArrowRight"
+        ) {
+          btnCloseNode.current && btnCloseNode.current.focus();
+        }
+        if (
+          focusedElement &&
+          focusedElement.id === "closeBtn" &&
+          key === "ArrowLeft"
+        ) {
+          const elemToFocus = btnsNavRef.current.find(
+            (elem) => elem.id === "3"
+          );
+          elemToFocus && elemToFocus.focus();
+        }
+        if (
+          focusedElement &&
+          ["1", "2", "4", "5", "7", "8", "BACKSPACE"].includes(
+            focusedElement.id
+          ) &&
+          key === "ArrowRight"
+        ) {
+          const elemToFocus = btnsNavRef.current.indexOf(focusedElement) + 1;
+          btnsNavRef.current[elemToFocus].focus();
+        }
+        if (
+          focusedElement &&
+          ["2", "3", "5", "6", "8", "9", "0"].includes(focusedElement.id) &&
+          key === "ArrowLeft"
+        ) {
+          const elemToFocus = btnsNavRef.current.indexOf(focusedElement) - 1;
+          btnsNavRef.current[elemToFocus].focus();
+        }
+      }
+
       if (key === "Backspace") {
         setPhoneInput((prev) => [
           ...phoneInput.slice(0, phoneInput.length - 1),
@@ -31,10 +171,9 @@ const PhonePanel = () => {
     window.addEventListener("keydown", handlePhoneInput);
 
     return () => {
-      node && (node.className = previousClassName);
       window.removeEventListener("keydown", handlePhoneInput);
     };
-  });
+  }, [phoneInput, btnCloseNode]);
 
   const phoneNumber: (string | number)[] = new Array(10)
     .fill("_")
@@ -57,6 +196,10 @@ const PhonePanel = () => {
   const handleChange = () => {
     setChecked((prev) => !prev);
   };
+	
+	const handleConfirm = () => {
+		if (checked && phoneInput.length === 10) setRequestAccept((prev) => !prev);
+	};
 
   const handleClick = (e: React.SyntheticEvent) => {
     const target = e.target as HTMLButtonElement;
@@ -68,9 +211,7 @@ const PhonePanel = () => {
     target && setPhoneInput((prev) => [...phoneInput, target.value]);
   };
 
-  const handleConfirm = () => {
-    if (checked && phoneInput.length === 10) setRequestAccept((prev) => !prev);
-  };
+  if (requestAccept && btnCloseNode.current) btnCloseNode.current.focus();
 
   return (
     <>
@@ -83,15 +224,15 @@ const PhonePanel = () => {
       >
         {requestAccept ? (
           <div className="w-[284px] text-center pt-[189px]">
-						<h1 className="text-[32px] leading-[37.5px] font-bold mb-[15px]">
-							ЗАЯВКА <br />
-						  ПРИНЯТА
-						</h1>
-						<p className="text-sm leading-[16.41px]">
-							Держите телефон под рукой. <br /> 
-							Скоро с Вами свяжется наш менеджер. 
-						</p>
-					</div>
+            <h1 className="text-[32px] leading-[37.5px] font-bold mb-[15px]">
+              ЗАЯВКА <br />
+              ПРИНЯТА
+            </h1>
+            <p className="text-sm leading-[16.41px]">
+              Держите телефон под рукой. <br />
+              Скоро с Вами свяжется наш менеджер.
+            </p>
+          </div>
         ) : (
           <div
             id="wrapper"
@@ -124,9 +265,15 @@ const PhonePanel = () => {
                 "0",
               ].map((btn, index) => (
                 <button
+                  ref={(node) => {
+                    node
+                      ? btnsNavRef.current.push(node)
+                      : btnsNavRef.current.filter((elem) => elem !== node);
+                  }}
                   onClick={(e: React.SyntheticEvent) => handleClick(e)}
-                  value={btn !== "СТЕРЕТЬ" ? btn : "BACKSPACE"}
+                  value={btn === "СТЕРЕТЬ" ? "BACKSPACE" : btn}
                   key={index}
+                  id={btn === "СТЕРЕТЬ" ? "BACKSPACE" : btn}
                   className={`h-[52px] text-lg leading-[18.75px] border-2 border-black border-solid 
 										${btn === "СТЕРЕТЬ" && "col-span-2"}
 										focus:bg-black focus:text-white
@@ -139,6 +286,11 @@ const PhonePanel = () => {
             <div className="flex mb-[13px]">
               <div className="py-1.5 px-2.5 mr-2.5 h-[52px] relative">
                 <input
+                  ref={(node) => {
+                    node
+                      ? btnsNavRef.current.push(node)
+                      : btnsNavRef.current.filter((elem) => elem !== node);
+                  }}
                   checked={checked}
                   onChange={handleChange}
                   id="GDPR"
@@ -163,8 +315,15 @@ const PhonePanel = () => {
               </label>
             </div>
             <button
+              id="confirm"
+              ref={(node) => {
+                node
+                  ? btnsNavRef.current.push(node)
+                  : btnsNavRef.current.filter((elem) => elem !== node);
+              }}
+              disabled={!(checked && phoneInput.length === 10)}
               onClick={() => handleConfirm()}
-              className="h-[52px] w-full uppercase font-medium leading-[18.75px] text-[#4E4E4E] border border-[#4E4E4E] border-solid"
+              className="h-[52px] w-full uppercase font-medium leading-[18.75px] text-[#4E4E4E] border border-[#4E4E4E] border-solid focus:bg-black focus:text-white"
             >
               Подтвердить номер
             </button>

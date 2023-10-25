@@ -1,19 +1,19 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { twMerge } from "tailwind-merge";
 
-const Banner = ({ handleStatus, handlePlayback }: { handleStatus: Function, handlePlayback: Function }) => {
+const Banner = ({ onActive }: { onActive: Function }) => {
 	const ref = useRef<HTMLDivElement>(null)
 	useEffect(() => {
 		const node = ref.current;
 		const previousClassName = node?.className
 		const newClassName = twMerge(node?.className, "translate-x-[0px]");
-		if (ref.current) ref.current.className = newClassName
+		if (node) setTimeout(() => node.className = newClassName, 5000)
 
 		return () => {
 			previousClassName && (node.className = previousClassName)
 		}
-	})
+	}, [])
 
   return (
     <div
@@ -47,8 +47,7 @@ const Banner = ({ handleStatus, handlePlayback }: { handleStatus: Function, hand
 					const node = ref.current
 					node && (node.className = twMerge(node.className, 'translate-x-[251px]'))
 					setTimeout(() => {
-						handleStatus()
-						handlePlayback()
+						onActive()
 					}, 350)
 				}}
         className="w-[156px] h-[52px] bg-black text-primary py-[16.5px]"

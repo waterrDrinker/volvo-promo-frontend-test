@@ -1,31 +1,38 @@
 "use client";
 import { useState } from "react";
+import { useIdleTimer } from "react-idle-timer";
+
 import VideoPlayer from "../features/video/VideoPlayer";
 import ActivePage from "../features/input/ActivePage";
 import Banner from "../features/video/Banner";
 
 const Promo = () => {
-  const [isIdle, setIsIdle] = useState(true);
-  const [playback, setPlayback] = useState(true);
+  const [state, setState] = useState<string>('Idle');
 
-  const handleStatus = (): void => {
-    setIsIdle((prev) => !prev);
-  };
+	const onIdle = () => {
+		setState('Idle')
+	}
 
-  const handlePlayback = () => {
-    setPlayback((prev) => !prev);
-  };
+	const onActive = () => {
+		setState('Active')
+	}
+
+	useIdleTimer({
+    onIdle,
+    timeout: 10_000,
+    throttle: 500
+  })
+
 
   return (
     <div className="w-[1280px] h-[720px] relative overflow-hidden">
-      <VideoPlayer playback={playback} />
-      {isIdle ? (
-        <Banner handleStatus={handleStatus} handlePlayback={handlePlayback} />
+      <VideoPlayer state={state} />
+      {state === 'Active' ? (
+				<ActivePage
+				onIdle={onIdle}
+			/>
       ) : (
-        <ActivePage
-          handleStatus={handleStatus}
-          handlePlayback={handlePlayback}
-        />
+        <Banner onActive={onActive} />
       )}
     </div>
   );
