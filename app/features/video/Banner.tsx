@@ -8,7 +8,7 @@ const Banner = ({ onActive }: { onActive: Function }) => {
 		const node = ref.current;
 		const previousClassName = node?.className
 		const newClassName = twMerge(node?.className, "translate-x-[0px]");
-		if (node) setTimeout(() => node.className = newClassName, 200)
+		if (node) setTimeout(() => node.className = newClassName, 5000)
 
 		return () => {
 			previousClassName && (node.className = previousClassName)
