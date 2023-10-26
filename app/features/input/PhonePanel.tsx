@@ -2,6 +2,8 @@ import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import { twMerge } from "tailwind-merge";
 
+type Statuses = 'typing' | 'pending' | 'failed' | 'submited';
+
 const PhonePanel = ({
   btnCloseNode,
 }: {
@@ -9,7 +11,7 @@ const PhonePanel = ({
 }) => {
   const [phoneInput, setPhoneInput] = useState<Array<string>>([]);
   const [checked, setChecked] = useState<boolean>(false);
-  const [requestAccept, setRequestAccept] = useState<boolean>(false);
+  const [status, setStatus] = useState<Statuses>('typing');
   const panelRef = useRef<HTMLDivElement>(null);
   const btnsNavRef = useRef<
     Array<HTMLButtonElement | HTMLInputElement | HTMLElement>
@@ -197,13 +199,19 @@ const PhonePanel = ({
     setChecked((prev) => !prev);
   };
 	
-	const handleConfirm = () => {
-		if (checked && phoneInput.length === 10) setRequestAccept((prev) => !prev);
+	const handleSubmit = async () => {
+		if (checked && phoneInput.length === 10) {
+			const response = await fetch(`
+			  http://apilayer.net/api/validate?access_key=233aa9415b6ec3de251f464e8bed3dea&number=${phoneInput.join('')}&country_code=RU`)
+			  const validation = await response.json()
+				validation.valid ? setStatus('submited') : setStatus('failed')
+		};
 	};
 
   const handleClick = (e: React.SyntheticEvent) => {
     const target = e.target as HTMLButtonElement;
     if (target.value === "BACKSPACE") {
+			setStatus('typing')
       setPhoneInput((prev) => [...phoneInput.slice(0, phoneInput.length - 1)]);
       return;
     }
@@ -211,7 +219,7 @@ const PhonePanel = ({
     target && setPhoneInput((prev) => [...phoneInput, target.value]);
   };
 
-  if (requestAccept && btnCloseNode.current) btnCloseNode.current.focus();
+  if (status === 'submited' && btnCloseNode.current) btnCloseNode.current.focus();
 
   return (
     <>
@@ -222,7 +230,7 @@ const PhonePanel = ({
 			-translate-x-[380px]
 			`}
       >
-        {requestAccept ? (
+        {status === 'submited' ? (
           <div className="w-[284px] text-center pt-[189px]">
             <h1 className="text-[32px] leading-[37.5px] font-bold mb-[15px]">
               ЗАЯВКА <br />
@@ -241,7 +249,7 @@ const PhonePanel = ({
             <h3 className="text-[26px] leading-[30.47px] mb-[13px]">
               Введите ваш номер мобильного телефона
             </h3>
-            <p className="text-[32px] leading-[37.5px] font-bold mb-[13px] whitespace-nowrap">
+            <p className={`text-[32px] leading-[37.5px] font-bold mb-[13px] whitespace-nowrap ${status === 'failed' && 'text-[#EA0000]'}`}>
               {renderNumber}
             </p>
             <p className="text-sm leading-[16.41px] mb-[13px]">
@@ -283,37 +291,43 @@ const PhonePanel = ({
                 </button>
               ))}
             </div>
-            <div className="flex mb-[13px]">
-              <div className="py-1.5 px-2.5 mr-2.5 h-[52px] relative">
-                <input
-                  ref={(node) => {
-                    node
-                      ? btnsNavRef.current.push(node)
-                      : btnsNavRef.current.filter((elem) => elem !== node);
-                  }}
-                  checked={checked}
-                  onChange={handleChange}
-                  id="GDPR"
-                  name="GDPR"
-                  type="checkbox"
-                  className="appearance-none w-10 h-10 border-2 border-black border-solid relative peer"
-                />
-                <Image
-                  src="/check.svg"
-                  width={23.98}
-                  height={16.63}
-                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
-      hidden peer-checked:block pointer-events-none"
-                  alt="check-icon"
-                />
+
+						{status !== 'failed' ? (
+              <div className="flex mb-[13px]">
+                <div className="py-1.5 px-2.5 mr-2.5 h-[52px] relative">
+                  <input
+                    ref={(node) => {
+                      node
+                        ? btnsNavRef.current.push(node)
+                        : btnsNavRef.current.filter((elem) => elem !== node);
+                    }}
+                    checked={checked}
+                    onChange={handleChange}
+                    id="GDPR"
+                    name="GDPR"
+                    type="checkbox"
+                    className="appearance-none w-10 h-10 border-2 border-black border-solid relative peer"
+                  />
+                  <Image
+                    src="/check.svg"
+                    width={23.98}
+                    height={16.63}
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
+                    hidden peer-checked:block pointer-events-none"
+                    alt="check-icon"
+                  />
+                </div>
+                <label
+                  className="flex items-center text-[#565656] text-left align-middle text-sm leading-[16.41px]"
+                  htmlFor="GDPR"
+                >
+                  Согласие на обработку персональных данных
+                </label>
               </div>
-              <label
-                className="flex items-center text-[#565656] text-left align-middle text-sm leading-[16.41px]"
-                htmlFor="GDPR"
-              >
-                Согласие на обработку персональных данных
-              </label>
-            </div>
+						) : (
+							<div className="h-[52px]  font-medium uppercase leading-[18.75px] text-[#EA0000]">Неверно введён номер</div>
+						)
+            }
             <button
               id="confirm"
               ref={(node) => {
@@ -322,7 +336,7 @@ const PhonePanel = ({
                   : btnsNavRef.current.filter((elem) => elem !== node);
               }}
               disabled={!(checked && phoneInput.length === 10)}
-              onClick={() => handleConfirm()}
+              onClick={() => handleSubmit()}
               className="h-[52px] w-full uppercase font-medium leading-[18.75px] text-[#4E4E4E] border border-[#4E4E4E] border-solid focus:bg-black focus:text-white"
             >
               Подтвердить номер

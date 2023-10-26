@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useIdleTimer } from "react-idle-timer";
 
 import VideoPlayer from "../features/video/VideoPlayer";
