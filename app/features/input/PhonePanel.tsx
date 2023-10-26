@@ -199,12 +199,13 @@ const PhonePanel = ({
     setChecked((prev) => !prev);
   };
 	
-	const handleSubmit = async () => {
+	const handleSubmit = () => {
 		if (checked && phoneInput.length === 10) {
-			const response = await fetch(`
-			  http://apilayer.net/api/validate?access_key=233aa9415b6ec3de251f464e8bed3dea&number=${phoneInput.join('')}&country_code=RU`)
-			  const validation = await response.json()
-				validation.valid ? setStatus('submited') : setStatus('failed')
+			// const response = await fetch(`
+			//   http://apilayer.net/api/validate?access_key=233aa9415b6ec3de251f464e8bed3dea&number=${phoneInput.join('')}&country_code=RU`)
+			//   const validation = await response.json()
+				// validation.valid ? setStatus('submited') : setStatus('failed')
+				setStatus('submited')
 		};
 	};
 
